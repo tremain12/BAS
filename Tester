@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple BAS Prep & Submission Helper (Australia)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Lighter background for a cleaner feel */
+            line-height: 1.6;
+            color: #334155; /* Slightly darker text for better readability */
+            padding: 2rem;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px; /* More rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Softer, larger shadow */
+            padding: 3rem; /* Increased padding */
+            margin-bottom: 2.5rem; /* More space between sections */
+            border: 1px solid #e2e8f0; /* Subtle border */
+        }
+        h1 {
+            font-size: 3rem; /* Slightly larger */
+            font-weight: 700;
+            color: #1e293b; /* Darker heading */
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 1rem;
+        }
+        h2 {
+            font-size: 2.4rem; /* Slightly larger */
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 2.5rem; /* More top margin */
+            margin-bottom: 1.25rem; /* More bottom margin */
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.75rem; /* More padding */
+        }
+        h3 {
+            font-size: 1.8rem; /* Slightly larger */
+            font-weight: 600;
+            color: #475569; /* Softer heading color */
+            margin-top: 1.75rem;
+            margin-bottom: 0.85rem;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.4rem; /* Slightly more space */
+            color: #4a5568;
+            font-size: 0.95rem; /* Slightly smaller for cleaner look */
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.85rem; /* Slightly more padding */
+            border: 1px solid #d1d5db;
+            border-radius: 10px; /* More rounded */
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out; /* Smoother transition */
+            background-color: #fcfdfe; /* Very light background */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #6366f1; /* Indigo */
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25); /* Larger, softer focus shadow */
+            background-color: #ffffff;
+        }
+        .form-section {
+            padding: 2rem; /* More padding */
+            background-color: #fcfcfd;
+            border-radius: 12px; /* More rounded */
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem; /* More space */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for sections */
+        }
+        .form-group {
+            margin-bottom: 1.5rem; /* More space between form groups */
+        }
+        .calculated-results-table,
+        .bas-report-table {
+            width: 100%;
+            border-collapse: separate; /* Allows border-radius on cells */
+            border-spacing: 0; /* Remove default cell spacing */
+            margin-top: 1.75rem;
+            background-color: #ffffff;
+            border-radius: 10px; /* Rounded table corners */
+            overflow: hidden; /* Ensures rounded corners are visible */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .calculated-results-table th,
+        .calculated-results-table td,
+        .bas-report-table th,
+        .bas-report-table td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem 1.25rem; /* More padding */
+            text-align: left;
+        }
+        .calculated-results-table th,
+        .bas-report-table th {
+            background-color: #f0f4f8;
+            font-weight: 600;
+            color: #334155;
+            border-top: none; /* Remove top border for first row */
+            border-left: none; /* Remove left border for first column */
+        }
+        .calculated-results-table th:first-child,
+        .bas-report-table th:first-child {
+            border-left: 1px solid #e2e8f0; /* Add back left border for first header */
+        }
+        .calculated-results-table th:first-child { border-top-left-radius: 10px; }
+        .calculated-results-table th:last-child { border-top-right-radius: 10px; }
+        .bas-report-table th:first-child { border-top-left-radius: 10px; }
+        .bas-report-table th:last-child { border-top-right-radius: 10px; }
+
+
+        .calculated-results-table td,
+        .bas-report-table td {
+            background-color: #ffffff;
+        }
+        .calculated-results-table tr:nth-child(even) td,
+        .bas-report-table tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+        .amount-display {
+            text-align: right;
+            font-weight: 500;
+            color: #0f172a;
+        }
+        .total-row td {
+            font-weight: 700;
+            background-color: #e0e7ff !important;
+            color: #3730a3;
+        }
+        .action-button {
+            padding: 1rem 2rem; /* Larger padding */
+            background-color: #6366f1;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px; /* More rounded */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: block;
+            margin: 2.5rem auto 0; /* More margin */
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); /* Subtle button shadow */
+        }
+        .action-button:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px); /* More pronounced lift */
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+        }
+        .action-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+        }
+        .info-section {
+            padding: 2rem; /* More padding */
+            background-color: #eff6ff;
+            border-left: 6px solid #60a5fa; /* Thicker border */
+            border-radius: 12px; /* More rounded */
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .info-section ul {
+            list-style-type: disc;
+            margin-left: 1.75rem; /* More indentation */
+            padding-left: 0;
+        }
+        .info-section li {
+            margin-bottom: 0.6rem; /* More space between list items */
+        }
+        .info-section p {
+            margin-bottom: 0.85rem;
+        }
+        .info-section strong {
+            color: #334155;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px dashed #f1f5f9;
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #475569;
+        }
+        .detail-value {
+            color: #1e293b;
+        }
+
+        /* Message box styling */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: #fff;
+            padding: 18px 30px; /* Larger padding */
+            border-radius: 10px; /* More rounded */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            font-size: 1.1rem; /* Larger font */
+        }
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+                color: #000; /* Ensure black text for printing */
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                max-width: none;
+                padding: 0;
+            }
+            .action-button,
+            .form-section,
+            .calculated-results-section,
+            .info-section:not(#report-section .info-section), /* Hide info sections not within report */
+            #paymentSection,
+            .message-box {
+                display: none !important; /* Hide non-report sections and message box */
+            }
+            #report-section {
+                display: block !important; /* Ensure report section is visible */
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            /* Adjust margins and padding for print layout */
+            h1, h2, h3, p, ul, ol, table {
+                margin: 0.5cm 0;
+                padding: 0;
+            }
+            .bas-report-table {
+                page-break-inside: auto;
+            }
+            .bas-report-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            .bas-report-table thead {
+                display: table-header-group;
+            }
+            .bas-report-table tfoot {
+                display: table-footer-group;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple BAS Prep & Submission Helper</h1>
+        <p class="text-lg text-center text-gray-700 mb-8">Streamline your Business Activity Statement (BAS) preparation for Australians. Enter your figures, get instant calculations, and generate a clear summary report.</p>
+
+        <form id="basForm">
+            <div class="form-section">
+                <h2>Section 1: Business Details</h2>
+                <div class="form-group">
+                    <label for="businessName">Business Name:</label>
+                    <input type="text" id="businessName" placeholder="e.g., Acme Pty Ltd" required>
+                </div>
+                <div class="form-group">
+                    <label for="abn">ABN:</label>
+                    <input type="text" id="abn" placeholder="e.g., 12 345 678 901" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactName">Contact Name:</label>
+                    <input type="text" id="contactName" placeholder="e.g., Jane Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="emailAddress">Email Address:</label>
+                    <input type="email" id="emailAddress" placeholder="e.g., jane.doe@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="financialYearQuarter">Financial Year Quarter:</label>
+                    <select id="financialYearQuarter" required>
+                        <option value="">Select a Quarter</option>
+                        <option value="Jul–Sep 2025">Jul–Sep 2025</option>
+                        <option value="Oct–Dec 2025">Oct–Dec 2025</option>
+                        <option value="Jan–Mar 2026">Jan–Mar 2026</option>
+                        <option value="Apr–Jun 2026">Apr–Jun 2026</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Section 2: Sales & Income</h2>
+                <div class="form-group">
+                    <label for="totalSales">Total sales (GST inclusive) for this quarter ($):</label>
+                    <input type="number" id="totalSales" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="gstFreeSales">Sales that are GST-free or input taxed ($):</label>
+                    <input type="number" id="gstFreeSales" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="exportSales">Export sales ($):</label>
+                    <input type="number" id="exportSales" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="otherBusinessIncomeNonGST">Other business income (non-GST) ($):</label>
+                    <input type="number" id="otherBusinessIncomeNonGST" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Section 3: Purchases & Expenses</h2>
+                <div class="form-group">
+                    <label for="totalPurchases">Total purchases (GST inclusive) for this quarter ($):</label>
+                    <input type="number" id="totalPurchases" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="gstFreePurchases">Purchases that are GST-free or input taxed ($):</label>
+                    <input type="number" id="gstFreePurchases" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="otherBusinessExpensesNonGST">Other business expenses (non-GST) ($):</label>
+                    <input type="number" id="otherBusinessExpensesNonGST" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Section 4: PAYG and Other Obligations</h2>
+                <div class="form-group">
+                    <label for="totalSalariesWagesPAYG">Total salaries and wages paid (including PAYG withholding) ($):</label>
+                    <input type="number" id="totalSalariesWagesPAYG" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="amountWithheldPAYG">Amount withheld for PAYG ($):</label>
+                    <input type="number" id="amountWithheldPAYG" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="paygInstallmentsPaid">Any PAYG installments paid ($):</label>
+                    <input type="number" id="paygInstallmentsPaid" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+                <div class="form-group">
+                    <label for="otherTaxAdjustmentsDescription">Other tax credits or adjustments (Description):</label>
+                    <textarea id="otherTaxAdjustmentsDescription" rows="2" placeholder="e.g., Fuel tax credits"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="otherTaxAdjustmentsAmount">Other tax credits or adjustments (Amount) ($):</label>
+                    <input type="number" id="otherTaxAdjustmentsAmount" value="0" min="0" step="0.01" oninput="calculateBAS()">
+                </div>
+            </div>
+        </form>
+
+        <div class="container calculated-results-section">
+            <h2>Automated BAS Calculator Results</h2>
+            <p class="text-sm text-gray-600 mb-4">These calculations update dynamically as you enter figures above.</p>
+            <table class="calculated-results-table">
+                <thead>
+                    <tr>
+                        <th>Calculation Description</th>
+                        <th class="amount-display">Amount ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GST on sales</td>
+                        <td class="amount-display" id="displayGSTOnSales">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>GST on purchases</td>
+                        <td class="amount-display" id="displayGSTOnPurchases">0.00</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Net GST payable (GST sales - purchases)</td>
+                        <td class="amount-display" id="displayNetGSTPayable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>PAYG withheld</td>
+                        <td class="amount-display" id="displayPAYGWithheld">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>PAYG installments paid</td>
+                        <td class="amount-display" id="displayPAYGInstallmentsPaid">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Other tax adjustments (Amount)</td>
+                        <td class="amount-display" id="displayOtherTaxAdjustmentsAmount">0.00</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Total Amount Payable / Refundable</td>
+                        <td class="amount-display" id="displayTotalPayableRefundable">0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="container" id="report-section">
+            <h2>BAS Summary Report</h2>
+            <p class="text-sm text-gray-600 mb-4">This report uses the data you've entered and the calculated figures.</p>
+
+            <div class="space-y-2 mb-8">
+                <div class="detail-item">
+                    <span class="detail-label">Business:</span>
+                    <span class="detail-value" id="reportBusinessName"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">ABN:</span>
+                    <span class="detail-value" id="reportABN"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Contact:</span>
+                    <span class="detail-value" id="reportContactName"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value" id="reportEmailAddress"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Quarter:</span>
+                    <span class="detail-value" id="reportFinancialYearQuarter"></span>
+                </div>
+            </div>
+
+            <h3>BAS Details</h3>
+            <table class="bas-report-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="amount-display">Amount ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total sales (GST inclusive)</td>
+                        <td class="amount-display" id="reportTotalSales">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>GST-free sales</td>
+                        <td class="amount-display" id="reportGSTFreeSales">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>GST collected on sales</td>
+                        <td class="amount-display" id="reportGSTOnSales">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Total purchases (GST inclusive)</td>
+                        <td class="amount-display" id="reportTotalPurchases">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>GST-free purchases</td>
+                        <td class="amount-display" id="reportGSTFreePurchases">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>GST credits on purchases</td>
+                        <td class="amount-display" id="reportGSTOnPurchases">0.00</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Net GST payable / refundable</td>
+                        <td class="amount-display" id="reportNetGSTPayable">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>PAYG withheld</td>
+                        <td class="amount-display" id="reportPAYGWithheld">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>PAYG installments paid</td>
+                        <td class="amount-display" id="reportPAYGInstallmentsPaid">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Other tax adjustments (Description)</td>
+                        <td id="reportOtherTaxAdjustmentsDescription"></td>
+                    </tr>
+                    <tr>
+                        <td>Other tax adjustments (Amount)</td>
+                        <td class="amount-display" id="reportOtherTaxAdjustmentsAmount">0.00</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Total Amount Payable / Refundable</td>
+                        <td class="amount-display" id="reportTotalPayableRefundable">0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-section">
+                <h3>Next Steps</h3>
+                <ul>
+                    <li>Lodge your BAS via ATO Business Portal before the due date.</li>
+                    <li>Keep all records and receipts for at least 5 years.</li>
+                    <li>Contact your accountant if unsure about any entries.</li>
+                </ul>
+            </div>
+            <div id="paymentSection" class="text-center mt-8">
+                <p class="mb-4 text-lg font-semibold text-gray-800">To unlock and print your full BAS Summary Report, please proceed with payment:</p>
+                <button id="payButton" class="action-button">Pay $5 for Report</button>
+            </div>
+            <button id="printButton" onclick="window.print()" class="action-button hidden">Print / Save as PDF</button>
+        </div>
+
+        <div class="container info-section">
+            <h2>Step-by-Step BAS Filing Checklist & Deadline Reminder Guide</h2>
+            <p>This guide provides essential steps and reminders for lodging your Business Activity Statement (BAS) with the Australian Taxation Office (ATO).</p>
+
+            <h3>BAS Filing Checklist</h3>
+            <p>Follow these steps to ensure a smooth BAS lodgement:</p>
+            <ul>
+                <li><strong>Gather All Financial Records:</strong> Sales invoices and receipts (for income), Purchase invoices and receipts (for expenses), Bank statements, Payroll records (if you have employees), and any other relevant financial documents for the quarter.</li>
+                <li><strong>Complete the BAS Preparation Questionnaire:</strong> Use the form above to input all your business details, sales, income, purchases, expenses, and PAYG information for the quarter. Ensure all entries are accurate and complete.</li>
+                <li><strong>Review Automated BAS Calculations:</strong> Check the 'Automated BAS Calculator Results' section. Verify that the `GST on sales`, `GST on purchases`, `Net GST payable`, `PAYG withheld`, `PAYG installments paid`, and `Total Amount Payable / Refundable` are as expected. If any figures seem incorrect, re-check your entries in the form.</li>
+                <li><strong>Generate and Review Summary Report:</strong> Review the 'BAS Summary Report' section. Verify all details (Business Name, ABN, Quarter, and all financial amounts) for accuracy. Save this report as a PDF for your records or to provide to your accountant.</li>
+                <li><strong>Lodge Your BAS via ATO Business Portal:</strong> Log in to the ATO Business Portal using your MyGovID. Navigate to the BAS lodgement section. Carefully enter the figures from your BAS Summary Report into the corresponding fields in the ATO portal. Double-check all entries before submitting.</li>
+                <li><strong>Make Payment (if applicable):</strong> If your BAS indicates an amount payable, ensure you make the payment by the due date. Payment options are available through the ATO Business Portal (e.g., BPAY, direct debit).</li>
+                <li><strong>Keep Records:</strong> Retain all original records and receipts for at least 5 years from the date your BAS was lodged. This includes invoices, receipts, bank statements, and payroll records. Store digital copies securely.</li>
+            </ul>
+
+            <h3>Important BAS Due Dates & Reminders</h3>
+            <p>BAS due dates are typically the 28th day of the month following the end of the quarter. If the 28th falls on a weekend or public holiday, the due date is usually the next business day.</p>
+            <ul>
+                <li><strong>Quarter 1: July – September</strong> - Due Date: 28 October</li>
+                <li><strong>Quarter 2: October – December</strong> - Due Date: 28 February</li>
+                <li><strong>Quarter 3: January – March</strong> - Due Date: 28 April</li>
+                <li><strong>Quarter 4: April – June</strong> - Due Date: 28 July</li>
+            </ul>
+            <p><strong>Penalties for Late Lodgement or Payment:</strong> The ATO may apply penalties for late lodgement or late payment of your BAS. These penalties can include: <strong>Failure to Lodge (FTL) penalty:</strong> Calculated based on the size of the entity and how many days late the BAS is lodged. <strong>General interest charge (GIC):</strong> Applied to overdue amounts. <strong>Administrative penalties:</strong> For false or misleading statements. Always aim to lodge and pay your BAS on time to avoid penalties. If you anticipate difficulty meeting a deadline, contact the ATO as soon as possible to discuss potential extensions or payment arrangements.</p>
+        </div>
+
+        <div class="container info-section">
+            <h2>Plain-English BAS FAQ & Common Mistakes Guide</h2>
+            <p>This guide answers common questions about the Business Activity Statement (BAS) and highlights frequent errors to help you avoid them.</p>
+
+            <h3>Frequently Asked Questions (FAQ)</h3>
+            <p><strong>Q1: What is a BAS?</strong> A: A Business Activity Statement (BAS) is a form that businesses registered for GST in Australia must lodge with the Australian Taxation Office (ATO). It reports your business's tax obligations, including Goods and Services Tax (GST), Pay As You Go (PAYG) instalments, PAYG withholding, and other taxes.</p>
+            <p><strong>Q2: Who needs to lodge a BAS?</strong> A: Any business registered for GST must lodge a BAS. This includes most businesses with a GST turnover of $75,000 or more (or $150,000 for non-profit organisations).</p>
+            <p><strong>Q3: How often do I need to lodge a BAS?</strong> A: Most small businesses lodge quarterly. Larger businesses might lodge monthly, and some very small businesses might lodge annually. Your ATO registration will specify your reporting cycle.</p>
+            <p><strong>Q4: What is GST?</strong> A: GST (Goods and Services Tax) is a broad-based tax of 10% on most goods, services, and other items sold or consumed in Australia. When you sell goods or services, you collect GST from your customers. When you buy goods or services for your business, you usually pay GST. The BAS helps you report the net difference.</p>
+            <p><strong>Q5: What is PAYG withholding?</strong> A: Pay As You Go (PAYG) withholding is the amount you withhold from payments you make to employees, contractors (under certain circumstances), and other businesses, which you then send to the ATO. This is typically for income tax purposes.</p>
+            <p><strong>Q6: What are PAYG instalments?</strong> A: PAYG instalments are prepayments of your income tax for the current financial year. If you expect to earn business or investment income above a certain threshold, the ATO will usually put you into the PAYG instalment system to help you manage your tax liability throughout the year.</p>
+            <p><strong>Q7: Can I lodge my BAS myself?</strong> A: Yes, you can lodge your BAS myself through the ATO Business Portal. However, if your tax affairs are complex or you're unsure, it's highly recommended to use a registered tax agent or accountant.</p>
+            <p><strong>Q8: What happens if I make a mistake on my BAS?</strong> A: If you discover an error after lodging, you can usually correct it through the ATO Business Portal or by contacting the ATO. Depending on the size and nature of the error, there might be consequences, but it's always best to correct errors promptly.</p>
+
+            <h3>Common BAS Mistakes to Avoid</h3>
+            <p>Avoiding these common errors can save you time, stress, and potential penalties:</p>
+            <ul>
+                <li><strong>Incorrectly Classifying Sales/Purchases:</strong> Mistake: Treating GST-free sales (e.g., basic food, some health services) or input-taxed sales (e.g., financial supplies, residential rents) as GST-inclusive. Solution: Understand what is GST-free, input-taxed, and taxable. If in doubt, check the ATO website or consult your accountant.</li>
+                <li><strong>Claiming GST Credits for Non-Business Purchases:</strong> Mistake: Including personal expenses or purchases not directly related to your business when calculating GST credits. Solution: Only claim GST credits for purchases made for your business. Keep clear records to differentiate.</li>
+                <li><strong>Not Keeping Adequate Records:</strong> Mistake: Losing receipts, not having proper invoices, or failing to record transactions. Solution: Maintain meticulous records for all sales and purchases for at least 5 years. Use accounting software or digital record-keeping systems.</li>
+                <li><strong>Errors in Calculation:</strong> Mistake: Simple arithmetic errors, using the wrong GST calculation method, or misinterpreting figures. Solution: Use automated tools like this BAS Helper, double-check your figures, and consider using accounting software that automates calculations.</li>
+                <li><strong>Missing Due Dates:</strong> Mistake: Forgetting to lodge or pay your BAS by the deadline. Solution: Set reminders, use a calendar, or engage a tax agent who manages these deadlines for you.</li>
+                <li><strong>Incorrectly Reporting PAYG Withholding:</strong> Mistake: Miscalculating amounts withheld from employee wages or not reporting all withheld amounts. Solution: Use ATO tax tables for accurate withholding and reconcile payroll records with your BAS entries.</li>
+                <li><strong>Not Adjusting for Previous Errors:</strong> Mistake: Discovering an error from a previous quarter but not correcting it. Solution: Always correct errors promptly. Small errors can often be adjusted on your next BAS, while larger ones may require a BAS revision.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="messageBox" class="message-box"></div>
+
+    <script>
+        // Flag to track if payment has been made
+        let paymentMade = false;
+
+        document.addEventListener('DOMContentLoaded', calculateBAS); // Calculate on page load with default values
+
+        // Get references to elements
+        const payButton = document.getElementById('payButton');
+        const printButton = document.getElementById('printButton');
+        const messageBox = document.getElementById('messageBox');
+
+        // Function to display a temporary message
+        function showMessage(message, duration = 3000) {
+            messageBox.textContent = message;
+            messageBox.classList.add('show');
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, duration);
+        }
+
+        // Event listener for the "Pay $5" button
+        payButton.addEventListener('click', () => {
+            // In a real application, this would trigger a payment gateway (e.g., Stripe, PayPal)
+            // For this simulation, we'll just confirm payment and unlock the print button.
+            paymentMade = true;
+            payButton.classList.add('hidden'); // Hide the pay button
+            printButton.classList.remove('hidden'); // Show the print button
+            showMessage('Payment successful! You can now print or save your report.');
+        });
+
+        function calculateBAS() {
+            // Helper to get number value from input, defaults to 0 if empty or invalid
+            const getNum = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+            // --- Get Form Inputs ---
+            const businessName = document.getElementById('businessName').value;
+            const abn = document.getElementById('abn').value;
+            const contactName = document.getElementById('contactName').value;
+            const emailAddress = document.getElementById('emailAddress').value;
+            const financialYearQuarter = document.getElementById('financialYearQuarter').value;
+
+            const totalSales = getNum('totalSales');
+            const gstFreeSales = getNum('gstFreeSales');
+            const exportSales = getNum('exportSales');
+            const otherBusinessIncomeNonGST = getNum('otherBusinessIncomeNonGST');
+
+            const totalPurchases = getNum('totalPurchases');
+            const gstFreePurchases = getNum('gstFreePurchases');
+            const otherBusinessExpensesNonGST = getNum('otherBusinessExpensesNonGST');
+
+            const totalSalariesWagesPAYG = getNum('totalSalariesWagesPAYG');
+            const amountWithheldPAYG = getNum('amountWithheldPAYG');
+            const paygInstallmentsPaid = getNum('paygInstallmentsPaid');
+            const otherTaxAdjustmentsDescription = document.getElementById('otherTaxAdjustmentsDescription').value;
+            const otherTaxAdjustmentsAmount = getNum('otherTaxAdjustmentsAmount');
+
+            // --- Perform Calculations ---
+            const gstOnSales = (totalSales > 0) ? (totalSales - gstFreeSales) / 11 : 0;
+            const gstOnPurchases = (totalPurchases > 0) ? (totalPurchases - gstFreePurchases) / 11 : 0;
+            const netGSTPayable = gstOnSales - gstOnPurchases;
+            const totalPayableRefundable = netGSTPayable + amountWithheldPAYG - paygInstallmentsPaid - otherTaxAdjustmentsAmount;
+
+            // --- Update Calculator Results Display ---
+            document.getElementById('displayGSTOnSales').textContent = gstOnSales.toFixed(2);
+            document.getElementById('displayGSTOnPurchases').textContent = gstOnPurchases.toFixed(2);
+            document.getElementById('displayNetGSTPayable').textContent = netGSTPayable.toFixed(2);
+            document.getElementById('displayPAYGWithheld').textContent = amountWithheldPAYG.toFixed(2);
+            document.getElementById('displayPAYGInstallmentsPaid').textContent = paygInstallmentsPaid.toFixed(2);
+            document.getElementById('displayOtherTaxAdjustmentsAmount').textContent = otherTaxAdjustmentsAmount.toFixed(2);
+            document.getElementById('displayTotalPayableRefundable').textContent = totalPayableRefundable.toFixed(2);
+
+            // --- Update Summary Report ---
+            document.getElementById('reportBusinessName').textContent = businessName;
+            document.getElementById('reportABN').textContent = abn;
+            document.getElementById('reportContactName').textContent = contactName;
+            document.getElementById('reportEmailAddress').textContent = emailAddress;
+            document.getElementById('reportFinancialYearQuarter').textContent = financialYearQuarter;
+
+            document.getElementById('reportTotalSales').textContent = totalSales.toFixed(2);
+            document.getElementById('reportGSTFreeSales').textContent = gstFreeSales.toFixed(2);
+            document.getElementById('reportGSTOnSales').textContent = gstOnSales.toFixed(2);
+            document.getElementById('reportTotalPurchases').textContent = totalPurchases.toFixed(2);
+            document.getElementById('reportGSTFreePurchases').textContent = gstFreePurchases.toFixed(2);
+            document.getElementById('reportGSTOnPurchases').textContent = gstOnPurchases.toFixed(2);
+            document.getElementById('reportNetGSTPayable').textContent = netGSTPayable.toFixed(2);
+            document.getElementById('reportPAYGWithheld').textContent = amountWithheldPAYG.toFixed(2);
+            document.getElementById('reportPAYGInstallmentsPaid').textContent = paygInstallmentsPaid.toFixed(2);
+            document.getElementById('reportOtherTaxAdjustmentsDescription').textContent = otherTaxAdjustmentsDescription;
+            document.getElementById('reportOtherTaxAdjustmentsAmount').textContent = otherTaxAdjustmentsAmount.toFixed(2);
+            document.getElementById('reportTotalPayableRefundable').textContent = totalPayableRefundable.toFixed(2);
+        }
+
+        // Add event listeners to all relevant input fields for real-time updates
+        const inputs = document.querySelectorAll('input[type="number"], input[type="text"], input[type="email"], select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', calculateBAS);
+        });
+
+        // Specific input for financial year quarter to also trigger updates
+        document.getElementById('financialYearQuarter').addEventListener('change', calculateBAS);
+
+    </script>
+</body>
+</html>
